@@ -28,7 +28,7 @@ namespace PedidosYa
         [HttpPost("pedidos")]
         public IActionResult AgregarPedido(Pedido pedido)
         {
-            ServicioCadeteria.Instance.Cadeteria.AgregarPedido(pedido.ObservacionPedido, pedido.Cliente.Nombre, pedido.Cliente.Direccion, pedido.Cliente.Telefono, pedido.Cliente.DatosReferenciaDireccion);
+            ServicioCadeteria.Instance.Cadeteria.AgregarPedido(pedido.ObservacionPedido, pedido.Cliente?.Nombre, pedido.Cliente?.Direccion, pedido.Cliente?.Telefono, pedido.Cliente?.DatosReferenciaDireccion);
             return NoContent();
         }
 
@@ -51,6 +51,25 @@ namespace PedidosYa
         public IActionResult CambiarCadetePedido(int idPedido, int idNuevoCadete) 
         {
             ServicioCadeteria.Instance.Cadeteria.ReasignarPedidoCadete(idPedido, idNuevoCadete);
+            return NoContent();
+        }
+
+        // chequear
+        [HttpGet("pedidos/{idPedido}")]
+        public IActionResult GetPedidoById(int idPedido) 
+        {
+            return Ok(ServicioCadeteria.Instance.Cadeteria.ListarPedidoPorId(idPedido));
+        }
+
+        [HttpGet("cadetes/{idCadete}")]
+        public IActionResult GetCadeteById(int idCadete) 
+        {
+            return Ok(ServicioCadeteria.Instance.Cadeteria.ListarCadetePorId(idCadete));
+        }
+
+        [HttpPost("cadetes")]
+        public IActionResult AddCadete(Cadete cadete) {
+            ServicioCadeteria.Instance.Cadeteria.AgregarCadete(cadete.Nombre, cadete.Direccion, cadete.Telefono);
             return NoContent();
         }
     }

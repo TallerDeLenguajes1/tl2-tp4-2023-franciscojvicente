@@ -23,6 +23,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-ServicioCadeteria.Instance.InicializarCadeteria(true);
+ServicioCadeteria.Instance.InicializarCadeteria();
 
 app.Run();
+
+// autoincremental del pedido no func   

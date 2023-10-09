@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-
 namespace PedidosYa
 {
     public class Informe

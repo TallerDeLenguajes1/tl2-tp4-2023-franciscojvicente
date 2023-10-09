@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.IO.Pipes;
 using System.Security.Cryptography.X509Certificates;
 
@@ -22,16 +23,11 @@ namespace PedidosYa {
             this.telefono = telefono;
         }
 
-
-        public void AgregarCadete(string? nombre, string? direccion, string? telefono) {
-            if(nombre == null || direccion == null || telefono == null) return;
-            var cadete = new Cadete(nombre, direccion, telefono);
-            listadoCadetes.Add(cadete);
-        }
         public void AgregarPedido(string? observacion, string? nombre, string? direccion, string? telefono, string? datosReferenciaDireccion) {
             if(observacion == null || nombre == null || direccion == null || telefono == null || datosReferenciaDireccion == null ) return;
             var pedido = new Pedido(observacion, nombre, direccion, telefono, datosReferenciaDireccion);
             listadoPedidos.Add(pedido);
+            GuardarPedidos();
         }
 
         public decimal JornalACobrar(int idCadete) {
@@ -45,6 +41,7 @@ namespace PedidosYa {
             var pedido = listadoPedidos.FirstOrDefault(p => p.NumeroPedido == idPedido);
             if (pedido == null || cadete == null) return;
             pedido.AsignarCadete(cadete);
+            GuardarPedidos();
         }
 
         public int PedidosEntregados() {
@@ -64,6 +61,7 @@ namespace PedidosYa {
             if (pedidoSeleccionado == null) return;
             if(nuevoEstado == 1) pedidoSeleccionado.Rechazar();
             else pedidoSeleccionado.Entregar();
+            GuardarPedidos();
         }
         public void ReasignarPedidoCadete(int idPedido, int idNuevoCadete) {
             var pedidoSeleccionado = listadoPedidos.FirstOrDefault(p => p.NumeroPedido == idPedido);
@@ -71,7 +69,58 @@ namespace PedidosYa {
             var cadeteNuevo = listadoCadetes.FirstOrDefault(c => c.Id == idNuevoCadete);
             if (cadeteNuevo == null) return;
             AsignarCadeteAPedido(cadeteNuevo.Id, pedidoSeleccionado.NumeroPedido);   
+            GuardarPedidos();
         }
 
-   }
+        public void AgregarCadetes(List<Cadete>? listaCadetes)
+        {
+            if (listaCadetes == null) return;
+            listadoCadetes.AddRange(listaCadetes);
+            var ultimoId = listadoCadetes.Max(c => c.Id);
+            Cadete.InicializarId(ultimoId);
+        }
+
+        public void AgregarPedidos(List<Pedido>? listaPedidos)
+        {
+            if(listaPedidos == null) return;
+            listadoPedidos.AddRange(listaPedidos);
+            var ultimoId = listadoPedidos.Max(p => p.NumeroPedido);
+            Pedido.InicializarId(ultimoId);
+        }
+        private void GuardarPedidos() {
+            var datosPedidos = new AccesoADatosPedidos();
+            datosPedidos.Guardar(listadoPedidos);
+        }
+
+        private void GuardarCadetes() {
+            var datosCadetes = new AccesoADatosCadetes();
+            datosCadetes.Guardar(listadoCadetes);
+        }
+
+        public Pedido? ListarPedidoPorId(int idPedido)
+        {
+            var pedidoSeleccionado = listadoPedidos.FirstOrDefault(p => p.NumeroPedido == idPedido);
+            if (pedidoSeleccionado == null) return null;
+            return pedidoSeleccionado;
+        }
+
+        public Cadete? ListarCadetePorId(int idCadete)
+        {
+            var cadeteSeleccionado = listadoCadetes.FirstOrDefault(c => c.Id == idCadete);
+            if (cadeteSeleccionado == null) return null;
+            return cadeteSeleccionado;
+        }
+
+        public void AgregarCadete(string? nombre, string? direccion, string? telefono) 
+        {
+            if (nombre == null || direccion == null || telefono == null) return;
+            var cadete = listadoCadetes.FirstOrDefault(c => c.Nombre == nombre && c.Direccion == direccion && c.Telefono == telefono);
+            if (cadete == null)
+            {
+                cadete = new Cadete(nombre, direccion, telefono);
+                listadoCadetes.Add(cadete);
+                GuardarCadetes(); 
+            }
+        }
+    }
 }

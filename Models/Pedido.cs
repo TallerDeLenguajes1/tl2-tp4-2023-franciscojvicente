@@ -9,8 +9,7 @@ namespace PedidosYa
         private EstadosPedidos estadosPedido;
         private Cadete? cadete;
 
-        
-        public int NumeroPedido { get => numeroPedido;}
+        public int NumeroPedido { get => numeroPedido; set => numeroPedido = value;}
         public string? ObservacionPedido { get => observacionPedido; set => observacionPedido = value;}
         public EstadosPedidos EstadosPedido { get => estadosPedido;  }
         public Cadete? Cadete { get => cadete; set => cadete = value; }
@@ -28,16 +27,8 @@ namespace PedidosYa
             observacionPedido = observacion;
             estadosPedido = EstadosPedidos.Pendiente;
         }
-
-        public void CambiarEstado()
-        {
-            int siguienteValor = ((int)EstadosPedido + 1) % Enum.GetValues(typeof(EstadosPedidos)).Length;
-            EstadosPedidos siguienteEstado = (EstadosPedidos)siguienteValor;
-
-            if (siguienteEstado > EstadosPedido)
-            {
-                estadosPedido = siguienteEstado;
-            }
+        public static void InicializarId(int ultimoId) {
+            autonumerico = ultimoId + 1;
         }
 
         public void Asignado()
@@ -54,7 +45,7 @@ namespace PedidosYa
         {
             estadosPedido = EstadosPedidos.Entregado;
         }
-        // solo
+
         public void Pendiente() {
             estadosPedido = EstadosPedidos.Pendiente;
         }
@@ -62,5 +53,6 @@ namespace PedidosYa
             this.cadete = cadete;
             Asignado();
         }
+        
     }
 }

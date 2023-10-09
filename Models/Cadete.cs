@@ -8,7 +8,7 @@ namespace PedidosYa
         private string? direccion;
         private string? telefono;
 
-        public int Id { get => id;}
+        public int Id { get => id; set => id = value;}
         public string? Nombre { get => nombre; set => nombre = value; }
         public string? Direccion { get => direccion; set => direccion = value; }
         public string? Telefono { get => telefono; set => telefono = value; }
@@ -24,8 +24,11 @@ namespace PedidosYa
             this.telefono = telefono;
         }
 
+        public static void InicializarId(int ultimoId) {
+            autonumerico = ultimoId + 1;
+        }
+
         public void TomarPedido(Pedido pedido) {
-            // listadoPedidos.Add(pedido);
             pedido.Asignado();
         }
 

@@ -3,8 +3,6 @@ namespace PedidosYa
     public class ServicioCadeteria
     {
         
-        const string ArchivoCadeteria = "cadeteria";
-        const string ArchivoCadetes = "listaCadetes"; 
         private static ServicioCadeteria? instance;
         private ServicioCadeteria() {
             cadeteria = new();
@@ -18,15 +16,13 @@ namespace PedidosYa
         private Cadeteria cadeteria;
         public Cadeteria Cadeteria { get => cadeteria;}
 
-        public void InicializarCadeteria(bool esJSON ) {
-            AccesoADatos repositorio;
-            if (esJSON) {
-                repositorio = new AccesoJSON(ArchivoCadeteria, ArchivoCadetes);
-            } else {
-                repositorio = new AccesoCSV(ArchivoCadeteria, ArchivoCadetes);
-            }
-            cadeteria = repositorio.Cadeteria ?? cadeteria;
+        public void InicializarCadeteria() {
+            var datosCadeteria = new AccesoADatosCadeteria();
+            cadeteria = datosCadeteria.Obtener() ?? new Cadeteria();
+            var datosCadetes = new AccesoADatosCadetes();
+            cadeteria.AgregarCadetes(datosCadetes.Obtener());
+            var datosPedidos = new AccesoADatosPedidos();
+            cadeteria.AgregarPedidos(datosPedidos.Obtener());
         }
-        
     }
 }
